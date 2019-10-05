@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+  lb:
+    command: /bin/bash /app/entry.sh
+    volumes:
+      - "./consul_configs/lb/consul.d:/etc/consul.d"
+    build:
+      context: .
+    ports:
+      - '80:80'
+  app:
+    command: /bin/bash /app/entry-rails.sh
+    volumes:
+      - "./consul_configs/rails/consul.d:/etc/consul.d"
+    build:
+      context: .
+      dockerfile: Dockerfile.rails
+    ports:
+      - '3000:3000'
+  consulserver:
+    command: consul agent -data-dir=/consul -bootstrap -server -ui -client=0.0.0.0 -bind=0.0.0.0
+    image: consul
+    environment:
+      CONSUL_BIND_INTERFACE: eth0
+    ports:
+      - "8500:8500"
+      - "8301"
+    depends_on:
+      - lb
+      - app

@@ -1,0 +1,22 @@
+FROM ruby
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends nodejs sqlite3 curl unzip && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get install -y  && \
+    curl -o ct.tgz https://releases.hashicorp.com/consul-template/0.20.1/consul-template_0.20.1_linux_amd64.tgz && \
+    tar -xvf ct.tgz && \
+    curl -o c.zip https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip && \
+    unzip c.zip && \
+    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+    apt-get update && apt-get -y install yarn
+
+RUN mv /consul /usr/local/sbin && mkdir -p /app
+RUN chmod a+x /usr/local/sbin/consul
+
+WORKDIR /app
+RUN gem install rails && rails new /app/foo
+
+EXPOSE 3000
+ADD ./entry-rails.sh /app/
