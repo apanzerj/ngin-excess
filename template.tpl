@@ -1,6 +1,3 @@
-{{- /* This should be the default, i.e. you have upstreams in both DCs and you want to use the local ones */}}
-{{- /* execute this template by providing the upstream service name */}}
-{{- /* e.g. "stg-web.web-app" */}}
 {{define "upstream_with_dummy"}}
   {{- $upstream := .}}
   {{- range service $upstream}}
