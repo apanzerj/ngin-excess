@@ -1,5 +1,11 @@
 version: '3.7'
 services:
+  vault:
+    image: vault
+    ports:
+      - "8200:8200"
+    volumes:
+      - "./config.hcl:/vault/config/config.hcl"
   lb:
     command: /bin/bash /app/entry.sh
     volumes:
@@ -28,3 +34,4 @@ services:
     depends_on:
       - lb
       - app
+      - vault
